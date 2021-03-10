@@ -1,0 +1,24 @@
+{
+    "name": "chiswill/ep-excel",
+    "description": "Excel Helper",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.17"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ep\\Excel\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ep\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
