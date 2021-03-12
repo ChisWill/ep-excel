@@ -10,7 +10,7 @@ require(BASE_PATH . '/vendor/autoload.php');
 
 $excel = new Excel;
 
-$result = $excel->simpleRead(BASE_PATH . '/tests/Support/list-1.xlsx');
+$result = $excel->simpleRead(BASE_PATH . '/tests/Support/list-2.xlsx', ['columns' => ['id', 'name']]);
 
 echo '<xmp>';
 print_r($result);

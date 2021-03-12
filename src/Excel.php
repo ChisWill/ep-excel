@@ -11,12 +11,14 @@ final class Excel
     public function simpleRead(string $filePath, array $options = []): array
     {
         $options = $this->normalize($options);
-        $sheet = IOFactory::load($filePath)->getActiveSheet();
+        $sheet = IOFactory::load($filePath)->setActiveSheetIndex($options['sheet']);
         $data = [];
         for ($row = $options['startRow']; $row <= $sheet->getHighestRow(); $row++) {
             $item = [];
-            for ($col = 1; $col <= $this->colToInt($sheet->getHighestColumn()); $col++) {
-                $item[] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
+            $k = 0;
+            for ($col = 1; $col <= $this->colToInt($sheet->getHighestColumn()); $col++, $k++) {
+                $column = $options['columns'][$k] ?? $k;
+                $item[$column] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
             }
             $data[] = $item;
         }
@@ -25,8 +27,9 @@ final class Excel
 
     private function normalize(array $options): array
     {
-        $options['sheet'] ??= 1;
+        $options['sheet'] ??= 0;
         $options['startRow'] ??= 2;
+        $options['columns'] ??= [];
 
         return $options;
     }
