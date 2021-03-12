@@ -8,44 +8,27 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 final class Excel
 {
-    public function simpleRead(string $filePath): array
+    public function simpleRead(string $filePath, array $options = []): array
     {
+        $options = $this->normalize($options);
         $sheet = IOFactory::load($filePath)->getActiveSheet();
-        $maxRow = $sheet->getHighestRow();
-        $maxCol = $sheet->getHighestColumn();
-
-        $loadTh = $loadTd = 0;
-        $title = [];
-        $return = [];
-        for ($row = 1; $row <= $maxRow; $row++) {
-            for ($col = 1; $col <= $this->colToInt($maxCol); $col++) {
-                $v = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
-
-                //     $val = trim($sheet->getCellByColumnAndRow($col + 1, $row)->getValue());
-                //     eval($evalIfstr1);
-                //     if ($ifStr) {
-                //         $loadTh = 1;
-                //         $title[$col] = $val;
-                //     }
-                //     if ($loadTd === 1) {
-                //         if (isset($title[$col])) {
-                //             eval($evalCellStr);
-                //         }
-                //     }
-                // }
-                // if ($loadTd === 1) {
-                //     eval($evalRowStr);
-                // }
-                // if ($loadTh === 1) {
-                //     $loadTh = 0;
-                //     $loadTd = 1;
+        $data = [];
+        for ($row = $options['startRow']; $row <= $sheet->getHighestRow(); $row++) {
+            $item = [];
+            for ($col = 1; $col <= $this->colToInt($sheet->getHighestColumn()); $col++) {
+                $item[] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
             }
+            $data[] = $item;
         }
-        if (isset($options['rowCallback'])) {
-            return [];
-        } else {
-            return $return;
-        }
+        return $data;
+    }
+
+    private function normalize(array $options): array
+    {
+        $options['sheet'] ??= 1;
+        $options['startRow'] ??= 2;
+
+        return $options;
     }
 
     private function colToInt($col)
@@ -59,53 +42,4 @@ final class Excel
         }
         return --$sum;
     }
-}
-
-/**
- * 调试专用，可以传入任意多的变量进行打印查看
- */
-function tes()
-{
-    $isCli = PHP_SAPI === 'cli';
-    if (!$isCli && !in_array('Content-type:text/html;charset=utf-8', headers_list())) {
-        header('Content-type:text/html;charset=utf-8');
-    }
-    global $_debugFunc;
-    $_debugFunc = $_debugFunc ?: 'print_r';
-    foreach (func_get_args() as $msg) {
-        if ($isCli) {
-            $_debugFunc($msg);
-            echo PHP_EOL;
-        } else {
-            if ($_debugFunc === 'var_dump') {
-                $_debugFunc($msg);
-            } else {
-                echo '<xmp>';
-                $_debugFunc($msg);
-                echo '</xmp>';
-            }
-        }
-    }
-}
-
-/**
- * @see tes()
- */
-function test()
-{
-    global $_debugFunc;
-    $_debugFunc = 'print_r';
-    tes(...func_get_args());
-    exit;
-}
-
-/**
- * @see tes()
- */
-function dump()
-{
-    global $_debugFunc;
-    $_debugFunc = 'var_dump';
-    tes(...func_get_args());
-    exit;
 }
