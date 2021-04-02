@@ -34,7 +34,7 @@ final class Excel
         return $options;
     }
 
-    private function colToInt($col)
+    private function colToInt($col): int
     {
         $pieces = str_split($col);
         $power = count($pieces) - 1;
