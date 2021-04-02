@@ -3,7 +3,6 @@
     "description": "Excel Helper",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
         "phpoffice/phpspreadsheet": "^1.17"
