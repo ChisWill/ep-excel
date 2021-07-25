@@ -3,7 +3,7 @@
     "description": "Excel Helper",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=7.4",
