@@ -10,22 +10,23 @@ final class Excel
 {
     public function simpleRead(string $filePath, array $options = []): array
     {
-        $options = $this->normalize($options);
+        $this->normalize($options);
+
         $sheet = IOFactory::load($filePath)->setActiveSheetIndex($options['sheet']);
-        $data = [];
-        for ($row = $options['startRow']; $row <= $sheet->getHighestRow(); $row++) {
+
+        $maxRow = $sheet->getHighestRow();
+        $maxCol = $this->colToInt($sheet->getHighestColumn());
+        for ($row = $options['startRow']; $row <= $maxRow; $row++) {
             $item = [];
-            $k = 0;
-            for ($col = 1; $col <= $this->colToInt($sheet->getHighestColumn()); $col++, $k++) {
-                $column = $options['columns'][$k] ?? $k;
-                $item[$column] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
+            for ($key = 0, $col = 1; $col <= $maxCol; $key++, $col++) {
+                $item[$options['columns'][$key] ?? $key] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
             }
             $data[] = $item;
         }
         return $data;
     }
 
-    private function normalize(array $options): array
+    private function normalize(array &$options): array
     {
         $options['sheet'] ??= 0;
         $options['startRow'] ??= 2;
@@ -34,7 +35,7 @@ final class Excel
         return $options;
     }
 
-    private function colToInt($col)
+    private function colToInt(string $col): int
     {
         $pieces = str_split($col);
         $power = count($pieces) - 1;
