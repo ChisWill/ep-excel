@@ -14,6 +14,7 @@ final class Excel
 
         $sheet = IOFactory::load($filePath)->setActiveSheetIndex($options['sheet']);
 
+        $result = [];
         $maxRow = $sheet->getHighestRow();
         $maxCol = $this->colToInt($sheet->getHighestColumn());
         for ($row = $options['startRow']; $row <= $maxRow; $row++) {
@@ -21,9 +22,9 @@ final class Excel
             for ($key = 0, $col = 1; $col <= $maxCol; $key++, $col++) {
                 $item[$options['columns'][$key] ?? $key] = $sheet->getCellByColumnAndRow($col, $row)->getFormattedValue();
             }
-            $data[] = $item;
+            $result[] = $item;
         }
-        return $data;
+        return $result;
     }
 
     private function normalize(array &$options): array
